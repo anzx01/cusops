@@ -1,0 +1,559 @@
+# 一、产品定义
+
+## 1.1 产品名称（建议）
+
+**AI Service Ops（服务行业AI运营平台）**
+
+---
+
+## 1.2 产品定位
+
+一个 **可配置的AI助手平台** ，帮助中小服务商：
+
+* 自动回复客户咨询
+* 自动预约
+* 自动筛选客户
+* 自动执行业务流程
+
+👉 用户无需编程，仅通过配置即可完成
+
+---
+
+## 1.3 核心价值
+
+对商家来说：
+
+* 减少漏单
+* 提升响应速度
+* 降低人工成本
+* 提高转化率
+
+---
+
+## 1.4 核心差异（必须明确）
+
+不是：
+
+* 聊天机器人
+
+而是：
+
+> **“能完成任务的AI助手（Agent + Workflow）”**
+
+---
+
+# 二、目标用户
+
+## 2.1 核心用户
+
+中小服务商（1–50人）：
+
+* 水暖 / HVAC
+* 牙医 / 医美
+* 家政 / 清洁
+* 房产中介
+
+---
+
+## 2.2 用户特征
+
+* 不懂技术
+* 时间紧
+* 强结果导向（是否多接单）
+
+---
+
+## 2.3 使用场景
+
+### 场景1：客户咨询
+
+> “明天能上门吗？”
+
+系统自动：
+
+* 回复
+* 询问地址
+* 给时间
+* 引导预约
+
+---
+
+### 场景2：预约管理
+
+* 自动安排时间
+* 写入日历
+* 发送确认
+
+---
+
+### 场景3：筛选客户
+
+* 是否在服务范围
+* 是否预算匹配
+
+---
+
+# 三、产品整体结构
+
+<pre class="overflow-visible! px-0!" data-start="805" data-end="1001"><div class="relative w-full mt-4 mb-1"><div class=""><div class="relative"><div class="h-full min-h-0 min-w-0"><div class="h-full min-h-0 min-w-0"><div class="border border-token-border-light border-radius-3xl corner-superellipse/1.1 rounded-3xl"><div class="h-full w-full border-radius-3xl bg-token-bg-elevated-secondary corner-superellipse/1.1 overflow-clip rounded-3xl lxnfua_clipPathFallback"><div class="pointer-events-none absolute end-1.5 top-1 z-2 md:end-2 md:top-1"></div><div class="relative"><div class="pe-11 pt-3"><div class="relative z-0 flex max-w-full"><div id="code-block-viewer" dir="ltr" class="q9tKkq_viewer cm-editor z-10 light:cm-light dark:cm-light flex h-full w-full flex-col items-stretch ͼ5 ͼj"><div class="cm-scroller"><div class="cm-content q9tKkq_readonly"><span>工作台（Dashboard）</span><br/><span>├── AI助手（Agent）</span><br/><span>├── 知识库（Knowledge）</span><br/><span>├── 自动化流程（Workflow）</span><br/><span>├── 渠道接入（Channels）</span><br/><span>├── 预约管理（Booking）</span><br/><span>├── 对话管理（Inbox）</span><br/><span>├── 数据分析（Analytics）</span><br/><span>├── 模板中心（Templates）</span><br/><span>└── 设置（Settings）</span></div></div></div></div></div></div></div></div></div></div><div class=""><div class=""></div></div></div></div></div></pre>
+
+---
+
+# 四、核心模块设计
+
+---
+
+## 4.1 工作台（Dashboard）
+
+### 功能
+
+* 今日咨询数
+* 今日预约数
+* 转化率
+* 未处理对话
+
+### 目的
+
+👉 让用户“看到价值”（非常关键）
+
+---
+
+## 4.2 知识库（Knowledge）
+
+---
+
+### 作用
+
+AI回答的基础
+
+---
+
+### 功能
+
+#### 1️⃣ 内容类型
+
+* FAQ（问答）
+* 文档（服务介绍）
+* 规则（结构化信息）
+
+---
+
+#### 2️⃣ 操作
+
+* 新增 / 编辑 / 删除
+* 分类管理
+* 批量导入
+
+---
+
+#### 3️⃣ 优化建议（系统自动）
+
+* “该问题回答不稳定，建议补充”
+* “用户频繁问但未覆盖”
+
+---
+
+### 设计原则
+
+👉 简单 > 强大
+
+👉 不做复杂知识管理系统
+
+---
+
+## 4.3 AI助手（Agent）
+
+---
+
+### 功能
+
+#### 1️⃣ 基础配置
+
+* 名称（如：水暖客服）
+* 角色设定
+* 语气风格
+* 目标（如：促成预约）
+
+---
+
+#### 2️⃣ 行为控制
+
+* 是否主动引导预约
+* 是否筛选客户
+* 是否转人工
+
+---
+
+#### 3️⃣ 绑定资源
+
+* 知识库
+* 工作流
+
+---
+
+### 核心原则
+
+👉 用户只需“描述业务”，不用写Prompt
+
+---
+
+## 4.4 自动化流程（Workflow）
+
+---
+
+### 定义
+
+AI助手执行任务的逻辑路径
+
+---
+
+### MVP版本（重要）
+
+👉 不做拖拽
+
+👉 使用“预设流程模板”
+
+---
+
+### 示例流程
+
+<pre class="overflow-visible! px-0!" data-start="1750" data-end="1813"><div class="relative w-full mt-4 mb-1"><div class=""><div class="relative"><div class="h-full min-h-0 min-w-0"><div class="h-full min-h-0 min-w-0"><div class="border border-token-border-light border-radius-3xl corner-superellipse/1.1 rounded-3xl"><div class="h-full w-full border-radius-3xl bg-token-bg-elevated-secondary corner-superellipse/1.1 overflow-clip rounded-3xl lxnfua_clipPathFallback"><div class="pointer-events-none absolute end-1.5 top-1 z-2 md:end-2 md:top-1"></div><div class="relative"><div class="pe-11 pt-3"><div class="relative z-0 flex max-w-full"><div id="code-block-viewer" dir="ltr" class="q9tKkq_viewer cm-editor z-10 light:cm-light dark:cm-light flex h-full w-full flex-col items-stretch ͼ5 ͼj"><div class="cm-scroller"><div class="cm-content q9tKkq_readonly"><span>客户咨询</span><br/><span>→ AI回复</span><br/><span>→ 收集信息（姓名/电话）</span><br/><span>→ 判断是否合格</span><br/><span>→ 预约</span><br/><span>→ 发送确认</span></div></div></div></div></div></div></div></div></div></div><div class=""><div class=""></div></div></div></div></div></pre>
+
+---
+
+### 节点类型（抽象）
+
+* AI回复
+* 收集信息
+* 条件判断
+* 执行动作（预约/通知）
+
+---
+
+### 后续版本
+
+👉 支持拖拽式流程
+
+---
+
+## 4.5 渠道接入（Channels）
+
+---
+
+### 支持渠道（分阶段）
+
+#### MVP
+
+* 网站聊天窗口（Web Chat）
+
+---
+
+#### 第二阶段
+
+* WhatsApp
+* Email
+
+---
+
+#### 第三阶段（复杂）
+
+* 微信 / 企业微信
+
+---
+
+### 功能
+
+* 多渠道统一收消息
+* 同一AI处理
+
+---
+
+## 4.6 对话管理（Inbox）
+
+---
+
+### 功能
+
+* 查看所有客户对话
+* 标记（潜在客户/无效）
+* 转人工
+
+---
+
+### 设计重点
+
+👉 类似客服系统，但更简单
+
+---
+
+## 4.7 预约管理（Booking）
+
+---
+
+### 功能
+
+* 查看预约
+* 修改时间
+* 状态管理
+
+---
+
+### 集成
+
+* Google Calendar
+* Outlook
+
+---
+
+### 自动化能力
+
+* 自动写入
+* 冲突检测
+
+---
+
+## 4.8 数据分析（Analytics）
+
+---
+
+### 核心指标
+
+* 咨询数
+* 回复率
+* 预约数
+* 转化率
+
+---
+
+### 展示方式
+
+👉 简单图表 + 趋势
+
+---
+
+### 目的
+
+👉 强化“续费理由”
+
+---
+
+## 4.9 模板中心（Templates）【极关键】
+
+---
+
+### 内容
+
+* 水暖行业模板
+* 牙医预约模板
+* 家政接单模板
+
+---
+
+### 功能
+
+* 一键应用
+* 可微调
+
+---
+
+### 战略意义
+
+👉 决定规模化能力
+
+---
+
+# 五、用户核心流程（非常关键）
+
+---
+
+## 5.1 新用户上线流程（Onboarding）
+
+---
+
+<pre class="overflow-visible! px-0!" data-start="2692" data-end="2754"><div class="relative w-full mt-4 mb-1"><div class=""><div class="relative"><div class="h-full min-h-0 min-w-0"><div class="h-full min-h-0 min-w-0"><div class="border border-token-border-light border-radius-3xl corner-superellipse/1.1 rounded-3xl"><div class="h-full w-full border-radius-3xl bg-token-bg-elevated-secondary corner-superellipse/1.1 overflow-clip rounded-3xl lxnfua_clipPathFallback"><div class="pointer-events-none absolute end-1.5 top-1 z-2 md:end-2 md:top-1"></div><div class="relative"><div class="pe-11 pt-3"><div class="relative z-0 flex max-w-full"><div id="code-block-viewer" dir="ltr" class="q9tKkq_viewer cm-editor z-10 light:cm-light dark:cm-light flex h-full w-full flex-col items-stretch ͼ5 ͼj"><div class="cm-scroller"><div class="cm-content q9tKkq_readonly"><span>选择行业</span><br/><span>→ 填写基础信息</span><br/><span>→ 导入/填写知识库</span><br/><span>→ 连接日历</span><br/><span>→ 启用AI助手</span><br/><span>→ 上线</span></div></div></div></div></div></div></div></div></div></div><div class=""><div class=""></div></div></div></div></div></pre>
+
+---
+
+### 设计目标
+
+👉 10分钟内完成上线
+
+---
+
+## 5.2 日常使用流程
+
+---
+
+### 用户（商家）
+
+* 查看对话
+* 查看预约
+* 查看数据
+
+---
+
+### 系统自动
+
+* 回复客户
+* 预约
+* 记录数据
+
+---
+
+# 六、权限与角色
+
+---
+
+## 角色
+
+* 管理员
+* 员工
+
+---
+
+## 权限
+
+* 管理配置
+* 查看数据
+* 处理对话
+
+---
+
+# 七、商业模式
+
+---
+
+## 收费模式
+
+### SaaS订阅
+
+* 基础版
+* 专业版
+* 企业版
+
+---
+
+## 增值
+
+* 按预约收费
+* 高级分析
+* 定制模板
+
+---
+
+# 八、产品边界（必须控制）
+
+---
+
+## 不做
+
+* CRM全功能系统
+* 复杂ERP
+* 深度行业系统
+
+---
+
+## 只做
+
+👉 “接单 + 转化 + 自动化”
+
+---
+
+# 九、关键成功要素（核心洞察）
+
+---
+
+## 1️⃣ 模板化
+
+不是工具，而是：
+
+> “现成解决方案”
+
+---
+
+## 2️⃣ 极简配置
+
+用户不能：
+
+* 写流程
+* 写prompt
+
+---
+
+## 3️⃣ 快速见效
+
+👉 1天内看到效果
+
+---
+
+# 十、版本规划
+
+---
+
+## MVP（3周）
+
+* Web聊天
+* 基础AI回复
+* 简单预约
+* 固定流程
+* 基础数据
+
+---
+
+## V1
+
+* 模板中心
+* 多行业支持
+* 数据分析
+
+---
+
+## V2
+
+* 拖拽流程
+* 多渠道
+* 插件系统
+
+---
+
+# 十一、最大风险 & 对策
+
+---
+
+## 风险1：用户不会配置
+
+👉 解决：
+
+* 行业模板
+* 引导式流程
+
+---
+
+## 风险2：AI不稳定
+
+👉 解决：
+
+* 强约束流程
+* 人工兜底
+
+---
+
+## 风险3：价值感不明显
+
+👉 解决：
+
+* 数据面板
+* ROI展示
+
+---
+
+# 十二、你这个项目的本质（帮你点透）
+
+你做的不是：
+
+> AI工具
+
+而是：
+
+> **“中小企业的AI员工平台”**
+>

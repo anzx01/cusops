@@ -1,0 +1,51 @@
+{
+  "name": "cusops",
+  "version": "1.0.0",
+  "private": true,
+  "description": "AI receptionist MVP for local service businesses.",
+  "scripts": {
+    "dev": "next dev",
+    "build": "prisma generate && next build",
+    "start": "next start",
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit",
+    "test:e2e": "npm run db:setup && npm run build && playwright test",
+    "prisma:generate": "prisma generate",
+    "prisma:migrate": "prisma migrate dev",
+    "prisma:seed": "prisma db seed",
+    "db:setup": "tsx scripts/setup-db.ts && prisma db seed",
+    "db:reset": "prisma migrate reset",
+    "postinstall": "prisma generate"
+  },
+  "keywords": [
+    "ai",
+    "customer-operations",
+    "booking",
+    "receptionist"
+  ],
+  "author": "",
+  "license": "UNLICENSED",
+  "prisma": {
+    "seed": "tsx prisma/seed.ts"
+  },
+  "dependencies": {
+    "@prisma/client": "^6.19.3",
+    "lucide-react": "^1.11.0",
+    "next": "^16.2.4",
+    "react": "^19.2.5",
+    "react-dom": "^19.2.5",
+    "zod": "^4.3.6"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.59.1",
+    "@types/node": "^25.6.0",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "dotenv": "^17.4.2",
+    "eslint": "^9.39.4",
+    "eslint-config-next": "^16.2.4",
+    "prisma": "^6.19.3",
+    "tsx": "^4.21.0",
+    "typescript": "^6.0.3"
+  }
+}

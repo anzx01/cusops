@@ -1,0 +1,306 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id          String           @id @default(cuid())
+  email       String           @unique
+  name        String?
+  memberships MerchantMember[]
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+}
+
+model Merchant {
+  id                  String                 @id @default(cuid())
+  name                String
+  industry            String
+  timezone            String                 @default("Asia/Shanghai")
+  locale              String                 @default("zh-CN")
+  phone               String?
+  email               String?
+  onboardingCompleted Boolean                @default(false)
+  createdAt           DateTime               @default(now())
+  updatedAt           DateTime               @updatedAt
+  aiAgent             AiAgent?
+  analyticsEvents     AnalyticsEvent[]
+  bookings            Booking[]
+  businessProfile     BusinessProfile?
+  calendarConnections CalendarConnection[]
+  channels            Channel[]
+  conversations       Conversation[]
+  faqs                Faq[]
+  handoffContacts     HandoffContact[]
+  leads               Lead[]
+  members             MerchantMember[]
+  missingKnowledge    MissingKnowledgeItem[]
+  roiSettings         RoiSettings?
+  serviceAreas        ServiceArea[]
+  services            Service[]
+}
+
+model MerchantMember {
+  id         String   @id @default(cuid())
+  userId     String
+  merchantId String
+  role       String   @default("admin")
+  createdAt  DateTime @default(now())
+  merchant   Merchant @relation(fields: [merchantId], references: [id], onDelete: Cascade)
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, merchantId])
+  @@index([merchantId])
+}
+
+model Service {
+  id               String    @id @default(cuid())
+  merchantId       String
+  name             String
+  description      String
+  durationMinutes  Int       @default(90)
+  priceNote        String?
+  aiBookingAllowed Boolean   @default(true)
+  active           Boolean   @default(true)
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+  bookings         Booking[]
+  merchant         Merchant  @relation(fields: [merchantId], references: [id], onDelete: Cascade)
+
+  @@index([merchantId, active])
+}
+
+model ServiceArea {
+  id         String   @id @default(cuid())
+  merchantId String
+  label      String
+  ruleType   String   @default("city")
+  ruleValue  String
+  active     Boolean  @default(true)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  merchant   Merchant @relation(fields: [merchantId], references: [id], onDelete: Cascade)
+
+  @@index([merchantId, active])
+}
+
+model BusinessProfile {
+  id                String   @id @default(cuid())
+  merchantId        String   @unique
+  companyIntro      String
+  businessHours     String
+  bookingRules      String
+  priceRules        String
+  forbiddenPromises String
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  merchant          Merchant @relation(fields: [merchantId], references: [id], onDelete: Cascade)
+}
+
+model Faq {
+  id         String   @id @default(cuid())
+  merchantId String
+  question   String
+  answer     String
+  active     Boolean  @default(true)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  merchant   Merchant @relation(fields: [merchantId], references: [id], onDelete: Cascade)
+
+  @@index([merchantId, active])
+}
+
+model HandoffContact {
+  id         String   @id @default(cuid())
+  merchantId String
+  name       String
+  email      String?
+  phone      String?
+  isDefault  Boolean  @default(false)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  merchant   Merchant @relation(fields: [merchantId], references: [id], onDelete: Cascade)
+
+  @@index([merchantId, isDefault])
+}
+
+model Channel {
+  id            String         @id @default(cuid())
+  merchantId    String
+  type          String         @default("web_chat")
+  name          String
+  publicKey     String         @unique
+  brandColor    String         @default("#155EEF")
+  welcomeText   String         @default("您好，我是 AI 接待员。请问需要预约什么服务？")
+  active        Boolean        @default(true)
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  conversations Conversation[]
+  merchant      Merchant       @relation(fields: [merchantId], references: [id], onDelete: Cascade)
+
+  @@index([merchantId, active])
+}
+
+model Lead {
+  id                  String         @id @default(cuid())
+  merchantId          String
+  name                String?
+  phone               String?
+  email               String?
+  address             String?
+  postalCode          String?
+  serviceNeed         String?
+  preferredTime       String?
+  qualificationStatus String         @default("new")
+  status              String         @default("new")
+  createdAt           DateTime       @default(now())
+  updatedAt           DateTime       @updatedAt
+  bookings            Booking[]
+  conversations       Conversation[]
+  merchant            Merchant       @relation(fields: [merchantId], references: [id], onDelete: Cascade)
+
+  @@index([merchantId, status])
+  @@index([merchantId, qualificationStatus])
+}
+
+model Conversation {
+  id              String     @id @default(cuid())
+  merchantId      String
+  channelId       String
+  leadId          String?
+  status          String     @default("new")
+  tag             String?
+  aiEnabled       Boolean    @default(true)
+  handoffRequired Boolean    @default(false)
+  handoffReason   String?
+  summary         String?
+  lastMessageAt   DateTime   @default(now())
+  createdAt       DateTime   @default(now())
+  updatedAt       DateTime   @updatedAt
+  aiRuns          AiRun[]
+  channel         Channel    @relation(fields: [channelId], references: [id], onDelete: Cascade)
+  lead            Lead?      @relation(fields: [leadId], references: [id])
+  merchant        Merchant   @relation(fields: [merchantId], references: [id], onDelete: Cascade)
+  messages        Message[]
+
+  @@index([merchantId, status])
+  @@index([merchantId, lastMessageAt])
+}
+
+model Message {
+  id             String       @id @default(cuid())
+  conversationId String
+  senderType     String
+  content        String
+  metadata       String?
+  createdAt      DateTime     @default(now())
+  conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+
+  @@index([conversationId, createdAt])
+}
+
+model AiAgent {
+  id                         String   @id @default(cuid())
+  merchantId                 String   @unique
+  name                       String   @default("AI 接待员")
+  tone                       String   @default("专业、简洁、友好")
+  defaultLanguage            String   @default("zh-CN")
+  proactivelyGuideBooking    Boolean  @default(true)
+  allowPriceQuote            Boolean  @default(false)
+  allowServiceTimeCommitment Boolean  @default(false)
+  createdAt                  DateTime @default(now())
+  updatedAt                  DateTime @updatedAt
+  merchant                   Merchant @relation(fields: [merchantId], references: [id], onDelete: Cascade)
+}
+
+model AiRun {
+  id             String       @id @default(cuid())
+  conversationId String
+  model          String
+  action         String
+  confidence     Float?
+  inputSnapshot  String?
+  outputSnapshot String?
+  safetyResult   String?
+  createdAt      DateTime     @default(now())
+  conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+
+  @@index([conversationId, createdAt])
+}
+
+model MissingKnowledgeItem {
+  id             String   @id @default(cuid())
+  merchantId     String
+  conversationId String?
+  question       String
+  status         String   @default("open")
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  merchant       Merchant @relation(fields: [merchantId], references: [id], onDelete: Cascade)
+
+  @@index([merchantId, status])
+}
+
+model CalendarConnection {
+  id              String   @id @default(cuid())
+  merchantId      String
+  provider        String   @default("google")
+  accountEmail    String?
+  calendarId      String?
+  accessTokenHint String?
+  connected       Boolean  @default(false)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  merchant        Merchant @relation(fields: [merchantId], references: [id], onDelete: Cascade)
+
+  @@index([merchantId, provider])
+}
+
+model Booking {
+  id              String    @id @default(cuid())
+  merchantId      String
+  leadId          String?
+  serviceId       String?
+  startsAt        DateTime
+  endsAt          DateTime
+  address         String?
+  status          String    @default("confirmed")
+  calendarEventId String?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  lead            Lead?     @relation(fields: [leadId], references: [id])
+  merchant        Merchant  @relation(fields: [merchantId], references: [id], onDelete: Cascade)
+  service         Service?  @relation(fields: [serviceId], references: [id])
+
+  @@index([merchantId, startsAt])
+  @@index([merchantId, status])
+}
+
+model AnalyticsEvent {
+  id         String   @id @default(cuid())
+  merchantId String
+  eventType  String
+  entityType String?
+  entityId   String?
+  properties String?
+  createdAt  DateTime @default(now())
+  merchant   Merchant @relation(fields: [merchantId], references: [id], onDelete: Cascade)
+
+  @@index([merchantId, eventType])
+  @@index([merchantId, createdAt])
+}
+
+model RoiSettings {
+  id                     String   @id @default(cuid())
+  merchantId             String   @unique
+  averageOrderValueCents Int      @default(50000)
+  minutesSavedPerAiLead  Int      @default(6)
+  hourlyLaborCostCents   Int      @default(5000)
+  createdAt              DateTime @default(now())
+  updatedAt              DateTime @updatedAt
+  merchant               Merchant @relation(fields: [merchantId], references: [id], onDelete: Cascade)
+}
