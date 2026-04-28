@@ -42,21 +42,50 @@ test("AI receptionist recognizes window cleaning and Xian addresses", async ({
   await expect(page.getByText("服务地址")).toBeVisible();
   await expect(page.getByText("期望时间")).toBeVisible();
 
-  await page.getByLabel("输入消息").fill("13572045112");
+  await page.getByLabel("输入消息").fill("13500000001");
   await page.getByRole("button", { name: "发送消息" }).click();
 
   await page.getByLabel("输入消息").fill("西安市，明天");
   await page.getByRole("button", { name: "发送消息" }).click();
 
-  await page.getByLabel("输入消息").fill("西安市富力城北区6号103");
+  await page.getByLabel("输入消息").fill("西安市测试小区1号101");
   await page.getByRole("button", { name: "发送消息" }).click();
 
   await expect(page.getByText("信息已收齐")).toBeVisible();
 
   await page.goto("/bookings");
   await expect(page.getByText("擦窗户").first()).toBeVisible();
-  await expect(page.getByText("13572045112").first()).toBeVisible();
-  await expect(page.getByText("西安市富力城北区6号103").first()).toBeVisible();
+  await expect(page.getByText("13500000001").first()).toBeVisible();
+  await expect(page.getByText("西安市测试小区1号101").first()).toBeVisible();
+});
+
+test("embeddable widget script opens chat from a host page", async ({
+  page,
+  baseURL,
+}) => {
+  const origin = baseURL ?? "http://127.0.0.1:3100";
+
+  await page.setContent(`
+    <!doctype html>
+    <html>
+      <head><title>Host page</title></head>
+      <body>
+        <main><h1>外部商家网站</h1></main>
+        <script async src="${origin}/widget.js" data-channel="demo-web-chat" data-label="在线咨询"></script>
+      </body>
+    </html>
+  `);
+
+  await expect(page.getByRole("button", { name: "在线咨询" })).toBeVisible();
+  await page.getByRole("button", { name: "在线咨询" }).click();
+
+  const frame = page.frameLocator('iframe[title="AI接待员聊天窗口"]');
+  await expect(frame.getByText("安心家政清洁")).toBeVisible();
+  await frame
+    .getByLabel("输入消息")
+    .fill("日常保洁，明天，上海市徐汇区漕溪北路1号，电话 13812345678");
+  await frame.getByRole("button", { name: "发送消息" }).click();
+  await expect(frame.getByText("信息已收齐")).toBeVisible();
 });
 
 test("AI receptionist forces handoff for risky customer messages", async ({
@@ -120,4 +149,15 @@ test("admin can handoff, resume AI, update settings, and cancel bookings", async
   await page.goto("/bookings");
   await page.getByRole("button", { name: "取消" }).first().click();
   await expect(page.getByText("已取消").first()).toBeVisible();
+});
+
+test("analytics shows business-friendly activity labels", async ({ page }) => {
+  await page.goto("/analytics");
+
+  await expect(page.getByRole("heading", { name: "最近业务动态" })).toBeVisible();
+  await expect(page.getByText("新增咨询").first()).toBeVisible();
+  await expect(page.getByText("客户对话").first()).toBeVisible();
+  await expect(page.getByText("有客户打开聊天并开始咨询。").first()).toBeVisible();
+  await expect(page.getByText("conversation_created")).toHaveCount(0);
+  await expect(page.getByText("cmoi")).toHaveCount(0);
 });

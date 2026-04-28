@@ -6,10 +6,13 @@ export const dynamic = "force-dynamic";
 
 export default async function ChatPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ publicKey: string }>;
+  searchParams: Promise<{ embed?: string }>;
 }) {
   const { publicKey } = await params;
+  const { embed } = await searchParams;
   const channel = await prisma.channel.findUnique({
     where: { publicKey },
     include: { merchant: true },
@@ -20,7 +23,7 @@ export default async function ChatPage({
   }
 
   return (
-    <main className="chat-page">
+    <main className={embed === "1" ? "chat-page chat-page-embedded" : "chat-page"}>
       <ChatClient
         publicKey={channel.publicKey}
         title={channel.merchant.name}

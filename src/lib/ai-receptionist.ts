@@ -45,11 +45,6 @@ function detectPreferredTime(text: string) {
 
 function looksLikeAddress(text: string) {
   return [
-    "省",
-    "市",
-    "区",
-    "县",
-    "镇",
     "街",
     "路",
     "道",
@@ -62,6 +57,10 @@ function looksLikeAddress(text: string) {
     "东区",
     "西区",
     "城",
+    "室",
+    "栋",
+    "楼",
+    "村",
   ].some((token) => text.includes(token));
 }
 

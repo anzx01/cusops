@@ -23,7 +23,7 @@ export default async function SettingsPage() {
     <>
       <section className="page-header">
         <div>
-          <h1 className="page-title">AI设置</h1>
+          <h1 className="page-title">设置</h1>
           <p className="page-description">
             配置 AI 接待员语气、预约边界、人工接管联系人和 ROI 估算口径。
           </p>

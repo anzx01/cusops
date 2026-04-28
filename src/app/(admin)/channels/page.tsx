@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { Copy, ExternalLink } from "lucide-react";
 import { prisma } from "@/lib/prisma";
 import { getCurrentMerchantId } from "@/lib/session";
@@ -9,7 +10,8 @@ export default async function ChannelsPage() {
     orderBy: { createdAt: "asc" },
   });
   const channel = channels[0];
-  const embedCode = `<script src="/widget.js" data-channel="${channel?.publicKey ?? "demo-web-chat"}"></script>`;
+  const publicKey = channel?.publicKey ?? "demo-web-chat";
+  const embedCode = `<script async src="/widget.js" data-channel="${publicKey}" data-label="在线咨询"></script>`;
 
   return (
     <>
@@ -20,10 +22,10 @@ export default async function ChannelsPage() {
             MVP 已接入 Web Chat。客户消息会进入统一 Inbox，并由同一套 AI 接待逻辑处理。
           </p>
         </div>
-        <a className="button button-primary" href={`/chat/${channel?.publicKey ?? "demo-web-chat"}`}>
+        <Link className="button button-primary" href={`/chat/${publicKey}`}>
           <ExternalLink aria-hidden size={16} />
           预览聊天
-        </a>
+        </Link>
       </section>
 
       <section className="grid grid-2">
@@ -67,7 +69,7 @@ export default async function ChannelsPage() {
             {embedCode}
           </pre>
           <p className="muted">
-            当前版本先提供预览地址和 public key。真实站点脚本打包会在后续渠道任务中补齐。
+            将这段代码放到网站页面中，右下角会出现聊天按钮，客户消息会进入统一 Inbox。
           </p>
         </div>
       </section>

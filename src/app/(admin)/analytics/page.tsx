@@ -1,8 +1,59 @@
 import { MetricCard } from "@/components/metric-card";
-import { formatCurrency, formatPercent } from "@/lib/format";
+import { formatCurrency, formatDateTime, formatPercent } from "@/lib/format";
 import { prisma } from "@/lib/prisma";
 import { getCurrentMerchantId } from "@/lib/session";
 import { BarChart3, Bot, CalendarCheck, MessageSquareWarning } from "lucide-react";
+
+const eventCopy: Record<
+  string,
+  { title: string; object: string; description: string }
+> = {
+  conversation_created: {
+    title: "新增咨询",
+    object: "客户对话",
+    description: "有客户打开聊天并开始咨询。",
+  },
+  message_received: {
+    title: "收到客户消息",
+    object: "客户对话",
+    description: "客户发送了一条新消息。",
+  },
+  ai_replied: {
+    title: "AI 已回复",
+    object: "AI 接待",
+    description: "AI 接待员完成了一次自动回复。",
+  },
+  lead_qualified: {
+    title: "有效线索",
+    object: "客户线索",
+    description: "客户信息满足服务范围和预约条件。",
+  },
+  booking_created: {
+    title: "创建预约",
+    object: "预约",
+    description: "AI 或人工创建了一条预约。",
+  },
+  booking_cancelled: {
+    title: "取消预约",
+    object: "预约",
+    description: "有一条预约被取消。",
+  },
+  handoff_requested: {
+    title: "转人工处理",
+    object: "人工接管",
+    description: "AI 暂停处理，等待人工接管。",
+  },
+};
+
+function describeEvent(eventType: string) {
+  return (
+    eventCopy[eventType] ?? {
+      title: "业务动态",
+      object: "系统",
+      description: "系统记录了一条业务动作。",
+    }
+  );
+}
 
 export default async function AnalyticsPage() {
   const merchantId = await getCurrentMerchantId();
@@ -55,25 +106,29 @@ export default async function AnalyticsPage() {
       </section>
 
       <section className="panel">
-        <h2 className="panel-title">最近事件</h2>
+        <h2 className="panel-title">最近业务动态</h2>
         <table className="table">
           <thead>
             <tr>
-              <th>事件</th>
-              <th>实体</th>
+              <th>动态</th>
+              <th>对象</th>
+              <th>说明</th>
               <th>时间</th>
             </tr>
           </thead>
           <tbody>
-            {events.map((event) => (
-              <tr key={event.id}>
-                <td>{event.eventType}</td>
-                <td>
-                  {event.entityType ?? "-"} {event.entityId ?? ""}
-                </td>
-                <td>{event.createdAt.toLocaleString("zh-CN")}</td>
-              </tr>
-            ))}
+            {events.map((event) => {
+              const copy = describeEvent(event.eventType);
+
+              return (
+                <tr key={event.id}>
+                  <td>{copy.title}</td>
+                  <td>{copy.object}</td>
+                  <td className="muted">{copy.description}</td>
+                  <td>{formatDateTime(event.createdAt)}</td>
+                </tr>
+              );
+            })}
           </tbody>
         </table>
       </section>

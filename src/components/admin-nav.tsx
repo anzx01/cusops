@@ -1,7 +1,6 @@
 import Link from "next/link";
 import {
   BarChart3,
-  Bot,
   CalendarCheck,
   Inbox,
   LayoutDashboard,
@@ -17,7 +16,6 @@ const items = [
   { href: "/business-profile", label: "业务资料", icon: SlidersHorizontal },
   { href: "/channels", label: "渠道", icon: MessageSquare },
   { href: "/analytics", label: "数据", icon: BarChart3 },
-  { href: "/settings", label: "AI设置", icon: Bot },
   { href: "/settings", label: "设置", icon: Settings },
 ];
 
