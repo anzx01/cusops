@@ -51,7 +51,7 @@ async function main() {
       bookingRules:
         "预约需提供姓名、电话、服务地址、清洁类型和期望时间。建议至少提前 24 小时预约。",
       priceRules:
-        "日常保洁 4 小时起，具体价格根据面积、清洁类型和地址确认。AI 只能提供价格范围，最终价格由人工确认。",
+        "日常保洁 4 小时起，擦窗户/玻璃清洁和深度清洁需根据面积、清洁类型和地址确认。AI 只能提供价格范围，最终价格由人工确认。",
       forbiddenPromises:
         "AI 不承诺最终价格、不承诺特殊清洁效果、不处理退款争议、不对安全事故做责任判断。",
     },
@@ -87,6 +87,12 @@ async function main() {
       durationMinutes: 300,
       priceNote: "按房屋面积和清洁范围报价。",
     },
+    {
+      name: "擦窗户",
+      description: "适合家庭窗户、阳台玻璃和室内玻璃清洁。",
+      durationMinutes: 180,
+      priceNote: "按窗户数量、高度和清洁难度确认。",
+    },
   ];
 
   for (const service of services) {
@@ -108,6 +114,7 @@ async function main() {
     { label: "浦东新区", ruleType: "district", ruleValue: "浦东" },
     { label: "徐汇区", ruleType: "district", ruleValue: "徐汇" },
     { label: "静安区", ruleType: "district", ruleValue: "静安" },
+    { label: "西安市", ruleType: "city", ruleValue: "西安" },
   ];
 
   for (const area of serviceAreas) {

@@ -363,6 +363,50 @@ select {
   padding: 9px 11px;
 }
 
+.textarea {
+  min-height: 94px;
+  resize: vertical;
+}
+
+.form {
+  display: grid;
+  gap: 14px;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.form-field {
+  display: grid;
+  gap: 6px;
+}
+
+.form-field label,
+.field-label {
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 650;
+}
+
+.form-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.button-danger {
+  border-color: #fecaca;
+  background: #fee2e2;
+  color: var(--danger);
+}
+
+.button-muted {
+  background: var(--panel-soft);
+}
+
 @media (max-width: 920px) {
   .app-shell {
     grid-template-columns: 1fr;

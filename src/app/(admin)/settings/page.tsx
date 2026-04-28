@@ -1,15 +1,22 @@
-import { Bot, ShieldAlert, UserRoundCheck } from "lucide-react";
+import { Bot, ShieldAlert, TrendingUp, UserRoundCheck } from "lucide-react";
+import {
+  updateAiSettings,
+  updateHandoffContact,
+  updateRoiSettings,
+} from "@/app/(admin)/actions";
+import { formatCurrency } from "@/lib/format";
 import { prisma } from "@/lib/prisma";
 import { getCurrentMerchantId } from "@/lib/session";
 
 export default async function SettingsPage() {
   const merchantId = await getCurrentMerchantId();
-  const [agent, handoffContact, merchant] = await Promise.all([
+  const [agent, handoffContact, merchant, roi] = await Promise.all([
     prisma.aiAgent.findUnique({ where: { merchantId } }),
     prisma.handoffContact.findFirst({
       where: { merchantId, isDefault: true },
     }),
     prisma.merchant.findUniqueOrThrow({ where: { id: merchantId } }),
+    prisma.roiSettings.findUnique({ where: { merchantId } }),
   ]);
 
   return (
@@ -18,37 +25,133 @@ export default async function SettingsPage() {
         <div>
           <h1 className="page-title">AI设置</h1>
           <p className="page-description">
-            当前是开发态只读配置，后续任务会接入表单编辑和真实认证。
+            配置 AI 接待员语气、预约边界、人工接管联系人和 ROI 估算口径。
           </p>
         </div>
       </section>
 
-      <section className="grid grid-3">
-        <div className="panel">
+      <section className="grid grid-2">
+        <form action={updateAiSettings} className="panel form">
           <h2 className="panel-title">
             <Bot aria-hidden size={16} /> 接待员
           </h2>
-          <table className="table">
-            <tbody>
-              <tr>
-                <th>名称</th>
-                <td>{agent?.name}</td>
-              </tr>
-              <tr>
-                <th>语气</th>
-                <td>{agent?.tone}</td>
-              </tr>
-              <tr>
-                <th>主动预约</th>
-                <td>{agent?.proactivelyGuideBooking ? "是" : "否"}</td>
-              </tr>
-              <tr>
-                <th>允许报价</th>
-                <td>{agent?.allowPriceQuote ? "是" : "否"}</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
+          <label className="form-field">
+            <span>名称</span>
+            <input className="input" name="name" required defaultValue={agent?.name} />
+          </label>
+          <label className="form-field">
+            <span>语气</span>
+            <textarea
+              className="input textarea"
+              name="tone"
+              required
+              defaultValue={agent?.tone}
+            />
+          </label>
+          <label className="form-field">
+            <span>默认语言</span>
+            <input
+              className="input"
+              name="defaultLanguage"
+              required
+              defaultValue={agent?.defaultLanguage ?? "zh-CN"}
+            />
+          </label>
+          <label className="field-label">
+            <input
+              name="proactivelyGuideBooking"
+              type="checkbox"
+              defaultChecked={agent?.proactivelyGuideBooking}
+            />{" "}
+            主动引导预约
+          </label>
+          <label className="field-label">
+            <input name="allowPriceQuote" type="checkbox" defaultChecked={agent?.allowPriceQuote} />{" "}
+            允许 AI 报价
+          </label>
+          <label className="field-label">
+            <input
+              name="allowServiceTimeCommitment"
+              type="checkbox"
+              defaultChecked={agent?.allowServiceTimeCommitment}
+            />{" "}
+            允许 AI 承诺服务时间
+          </label>
+          <button className="button button-primary" type="submit">
+            保存 AI 设置
+          </button>
+        </form>
+
+        <form action={updateHandoffContact} className="panel form">
+          <h2 className="panel-title">
+            <UserRoundCheck aria-hidden size={16} /> 人工接管
+          </h2>
+          <label className="form-field">
+            <span>联系人</span>
+            <input className="input" name="name" required defaultValue={handoffContact?.name} />
+          </label>
+          <label className="form-field">
+            <span>邮箱</span>
+            <input className="input" name="email" type="email" defaultValue={handoffContact?.email ?? ""} />
+          </label>
+          <label className="form-field">
+            <span>电话</span>
+            <input className="input" name="phone" defaultValue={handoffContact?.phone ?? ""} />
+          </label>
+          <p className="muted">当前商家：{merchant.name}</p>
+          <button className="button button-primary" type="submit">
+            保存联系人
+          </button>
+        </form>
+      </section>
+
+      <section className="grid grid-2">
+        <form action={updateRoiSettings} className="panel form">
+          <h2 className="panel-title">
+            <TrendingUp aria-hidden size={16} /> ROI 口径
+          </h2>
+          <label className="form-field">
+            <span>平均客单价</span>
+            <input
+              className="input"
+              min={0}
+              name="averageOrderValue"
+              required
+              step="1"
+              type="number"
+              defaultValue={(roi?.averageOrderValueCents ?? 0) / 100}
+            />
+          </label>
+          <label className="form-field">
+            <span>每条有效线索节省分钟数</span>
+            <input
+              className="input"
+              min={0}
+              name="minutesSavedPerAiLead"
+              required
+              type="number"
+              defaultValue={roi?.minutesSavedPerAiLead ?? 0}
+            />
+          </label>
+          <label className="form-field">
+            <span>人工时薪</span>
+            <input
+              className="input"
+              min={0}
+              name="hourlyLaborCost"
+              required
+              step="1"
+              type="number"
+              defaultValue={(roi?.hourlyLaborCostCents ?? 0) / 100}
+            />
+          </label>
+          <p className="muted">
+            当前平均客单价：{formatCurrency(roi?.averageOrderValueCents ?? 0)}
+          </p>
+          <button className="button button-primary" type="submit">
+            保存 ROI
+          </button>
+        </form>
 
         <div className="panel">
           <h2 className="panel-title">
@@ -58,33 +161,8 @@ export default async function SettingsPage() {
             <li className="list-item">命中投诉、退款、受伤、律师、差评等词转人工</li>
             <li className="list-item">不承诺最终价格</li>
             <li className="list-item">不处理退款争议和责任判断</li>
+            <li className="list-item">客户要求人工时必须暂停 AI</li>
           </ul>
-        </div>
-
-        <div className="panel">
-          <h2 className="panel-title">
-            <UserRoundCheck aria-hidden size={16} /> 人工接管
-          </h2>
-          <table className="table">
-            <tbody>
-              <tr>
-                <th>联系人</th>
-                <td>{handoffContact?.name}</td>
-              </tr>
-              <tr>
-                <th>邮箱</th>
-                <td>{handoffContact?.email}</td>
-              </tr>
-              <tr>
-                <th>电话</th>
-                <td>{handoffContact?.phone}</td>
-              </tr>
-              <tr>
-                <th>商家</th>
-                <td>{merchant.name}</td>
-              </tr>
-            </tbody>
-          </table>
         </div>
       </section>
     </>

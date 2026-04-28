@@ -7,10 +7,30 @@ function extractPhone(text: string) {
   return text.match(/1[3-9]\d{9}/)?.[0];
 }
 
-function detectServiceNeed(text: string) {
-  if (text.includes("深度")) return "深度清洁";
-  if (text.includes("日常")) return "日常保洁";
-  if (text.includes("搬家")) return "搬家前后清洁";
+function detectServiceNeed(
+  text: string,
+  services: Array<{ name: string }>,
+) {
+  const exactService = services.find((service) => text.includes(service.name));
+
+  if (exactService) return exactService.name;
+
+  if (["擦窗", "窗户", "玻璃"].some((keyword) => text.includes(keyword))) {
+    return services.find((service) => /窗|玻璃/.test(service.name))?.name;
+  }
+
+  if (["深度", "大扫除"].some((keyword) => text.includes(keyword))) {
+    return services.find((service) => service.name.includes("深度"))?.name;
+  }
+
+  if (["日常", "保洁"].some((keyword) => text.includes(keyword))) {
+    return services.find((service) => service.name.includes("日常"))?.name;
+  }
+
+  if (["搬家", "搬入", "搬出"].some((keyword) => text.includes(keyword))) {
+    return services.find((service) => service.name.includes("搬家"))?.name;
+  }
+
   return undefined;
 }
 
@@ -24,9 +44,25 @@ function detectPreferredTime(text: string) {
 }
 
 function looksLikeAddress(text: string) {
-  return ["上海", "浦东", "徐汇", "静安", "路", "区", "弄"].some((token) =>
-    text.includes(token),
-  );
+  return [
+    "省",
+    "市",
+    "区",
+    "县",
+    "镇",
+    "街",
+    "路",
+    "道",
+    "巷",
+    "号",
+    "弄",
+    "小区",
+    "北区",
+    "南区",
+    "东区",
+    "西区",
+    "城",
+  ].some((token) => text.includes(token));
 }
 
 function hasRisk(text: string) {
@@ -107,7 +143,7 @@ export async function handleAiReception(input: {
     return reply;
   }
 
-  const serviceNeed = detectServiceNeed(input.message);
+  const serviceNeed = detectServiceNeed(input.message, conversation.merchant.services);
   const phone = extractPhone(input.message);
   const preferredTime = detectPreferredTime(input.message);
   const address = looksLikeAddress(input.message) ? input.message : undefined;

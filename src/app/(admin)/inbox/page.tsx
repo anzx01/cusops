@@ -1,4 +1,9 @@
 import Link from "next/link";
+import {
+  closeConversation,
+  requestManualHandoff,
+  resumeAi,
+} from "@/app/(admin)/actions";
 import { StatusBadge } from "@/components/status-badge";
 import { formatDateTime } from "@/lib/format";
 import { prisma } from "@/lib/prisma";
@@ -47,11 +52,15 @@ export default async function InboxPage({
             {conversations.map((conversation) => (
               <li className="list-item" key={conversation.id}>
                 <Link href={`/inbox?id=${conversation.id}`}>
-                  <strong>{conversation.lead?.name ?? conversation.lead?.phone ?? "匿名客户"}</strong>
+                  <strong>
+                    {conversation.lead?.name ?? conversation.lead?.phone ?? "匿名客户"}
+                  </strong>
                   <p className="muted">{conversation.channel.name}</p>
                   <div style={{ display: "flex", justifyContent: "space-between", gap: 12 }}>
                     <StatusBadge status={conversation.status} />
-                    <span className="muted">{formatDateTime(conversation.lastMessageAt)}</span>
+                    <span className="muted">
+                      {formatDateTime(conversation.lastMessageAt)}
+                    </span>
                   </div>
                 </Link>
               </li>
@@ -71,6 +80,30 @@ export default async function InboxPage({
                 </div>
                 <StatusBadge status={selected.status} />
               </div>
+
+              <div className="form-actions" style={{ marginBottom: 16 }}>
+                <form action={requestManualHandoff}>
+                  <input name="conversationId" type="hidden" value={selected.id} />
+                  <input name="reason" type="hidden" value="人工手动接管" />
+                  <button className="button button-primary" type="submit">
+                    人工接管
+                  </button>
+                </form>
+                <form action={resumeAi}>
+                  <input name="conversationId" type="hidden" value={selected.id} />
+                  <button className="button button-muted" type="submit">
+                    恢复 AI
+                  </button>
+                </form>
+                <form action={closeConversation}>
+                  <input name="conversationId" type="hidden" value={selected.id} />
+                  <input name="tag" type="hidden" value="已关闭" />
+                  <button className="button button-danger" type="submit">
+                    关闭对话
+                  </button>
+                </form>
+              </div>
+
               <div className="chat-messages" style={{ maxHeight: 420 }}>
                 {selected.messages.map((message) => (
                   <div

@@ -1,4 +1,20 @@
-import { ClipboardList, MapPin, MessageSquareText, ShieldAlert } from "lucide-react";
+import {
+  ClipboardList,
+  MapPin,
+  MessageSquareText,
+  Plus,
+  ShieldAlert,
+} from "lucide-react";
+import {
+  addFaq,
+  addService,
+  addServiceArea,
+  ignoreMissingKnowledge,
+  toggleFaq,
+  toggleService,
+  toggleServiceArea,
+  updateBusinessProfile,
+} from "@/app/(admin)/actions";
 import { StatusBadge } from "@/components/status-badge";
 import { prisma } from "@/lib/prisma";
 import { getCurrentMerchantId } from "@/lib/session";
@@ -8,7 +24,10 @@ export default async function BusinessProfilePage() {
   const [profile, services, areas, faqs, missingKnowledge] = await Promise.all([
     prisma.businessProfile.findUnique({ where: { merchantId } }),
     prisma.service.findMany({ where: { merchantId }, orderBy: { name: "asc" } }),
-    prisma.serviceArea.findMany({ where: { merchantId }, orderBy: { label: "asc" } }),
+    prisma.serviceArea.findMany({
+      where: { merchantId },
+      orderBy: { label: "asc" },
+    }),
     prisma.faq.findMany({ where: { merchantId }, orderBy: { createdAt: "asc" } }),
     prisma.missingKnowledgeItem.findMany({
       where: { merchantId },
@@ -22,46 +41,101 @@ export default async function BusinessProfilePage() {
         <div>
           <h1 className="page-title">业务资料</h1>
           <p className="page-description">
-            AI 接待员优先基于这些业务资料回答、筛选和推进预约。
+            AI 接待员优先基于这些业务资料回答、筛选和推进预约。这里的内容会直接影响后续对话。
           </p>
         </div>
       </section>
 
       <section className="grid grid-2">
-        <div className="panel">
+        <form action={updateBusinessProfile} className="panel form">
           <h2 className="panel-title">公司与规则</h2>
-          <ul className="list">
-            <li className="list-item">
-              <strong>公司介绍</strong>
-              <p className="muted">{profile?.companyIntro}</p>
-            </li>
-            <li className="list-item">
-              <strong>营业时间</strong>
-              <p className="muted">{profile?.businessHours}</p>
-            </li>
-            <li className="list-item">
-              <strong>预约规则</strong>
-              <p className="muted">{profile?.bookingRules}</p>
-            </li>
-            <li className="list-item">
-              <strong>价格规则</strong>
-              <p className="muted">{profile?.priceRules}</p>
-            </li>
-            <li className="list-item">
-              <strong>不可承诺事项</strong>
-              <p className="muted">{profile?.forbiddenPromises}</p>
-            </li>
-          </ul>
-        </div>
+          <label className="form-field">
+            <span>公司介绍</span>
+            <textarea
+              className="input textarea"
+              name="companyIntro"
+              required
+              defaultValue={profile?.companyIntro}
+            />
+          </label>
+          <label className="form-field">
+            <span>营业时间</span>
+            <input
+              className="input"
+              name="businessHours"
+              required
+              defaultValue={profile?.businessHours}
+            />
+          </label>
+          <label className="form-field">
+            <span>预约规则</span>
+            <textarea
+              className="input textarea"
+              name="bookingRules"
+              required
+              defaultValue={profile?.bookingRules}
+            />
+          </label>
+          <label className="form-field">
+            <span>价格规则</span>
+            <textarea
+              className="input textarea"
+              name="priceRules"
+              required
+              defaultValue={profile?.priceRules}
+            />
+          </label>
+          <label className="form-field">
+            <span>不可承诺事项</span>
+            <textarea
+              className="input textarea"
+              name="forbiddenPromises"
+              required
+              defaultValue={profile?.forbiddenPromises}
+            />
+          </label>
+          <div>
+            <button className="button button-primary" type="submit">
+              保存业务资料
+            </button>
+          </div>
+        </form>
 
         <div className="panel">
           <h2 className="panel-title">待补充问题</h2>
           <ul className="list">
             {missingKnowledge.map((item) => (
               <li className="list-item" key={item.id}>
-                <div style={{ display: "flex", justifyContent: "space-between", gap: 12 }}>
-                  <span>{item.question}</span>
-                  <StatusBadge status={item.status} />
+                <div className="form">
+                  <div style={{ display: "flex", justifyContent: "space-between", gap: 12 }}>
+                    <strong>{item.question}</strong>
+                    <StatusBadge status={item.status} />
+                  </div>
+                  {item.status === "open" ? (
+                    <div className="form-actions">
+                      <form action={addFaq} className="form-actions">
+                        <input name="missingKnowledgeId" type="hidden" value={item.id} />
+                        <input name="question" type="hidden" value={item.question} />
+                        <input
+                          aria-label={`补充 ${item.question} 的答案`}
+                          className="input"
+                          name="answer"
+                          placeholder="补充为 FAQ 答案"
+                          required
+                          style={{ minWidth: 220 }}
+                        />
+                        <button className="button button-primary" type="submit">
+                          保存为 FAQ
+                        </button>
+                      </form>
+                      <form action={ignoreMissingKnowledge}>
+                        <input name="id" type="hidden" value={item.id} />
+                        <button className="button button-muted" type="submit">
+                          忽略
+                        </button>
+                      </form>
+                    </div>
+                  ) : null}
                 </div>
               </li>
             ))}
@@ -77,12 +151,49 @@ export default async function BusinessProfilePage() {
           <ul className="list">
             {services.map((service) => (
               <li className="list-item" key={service.id}>
-                <strong>{service.name}</strong>
+                <div style={{ display: "flex", justifyContent: "space-between", gap: 12 }}>
+                  <strong>{service.name}</strong>
+                  <StatusBadge status={service.active ? "qualified" : "closed"} />
+                </div>
                 <p className="muted">{service.description}</p>
                 <p className="muted">{service.priceNote}</p>
+                <form action={toggleService}>
+                  <input name="id" type="hidden" value={service.id} />
+                  <button className="button button-muted" type="submit">
+                    {service.active ? "停用" : "启用"}
+                  </button>
+                </form>
               </li>
             ))}
           </ul>
+          <form action={addService} className="form" style={{ marginTop: 16 }}>
+            <h3 className="panel-title">
+              <Plus aria-hidden size={15} /> 新增服务
+            </h3>
+            <input className="input" name="name" placeholder="服务名称" required />
+            <textarea
+              className="input textarea"
+              name="description"
+              placeholder="服务说明"
+              required
+            />
+            <div className="form-grid">
+              <input
+                className="input"
+                min={15}
+                name="durationMinutes"
+                placeholder="时长分钟"
+                type="number"
+              />
+              <input className="input" name="priceNote" placeholder="价格说明" />
+            </div>
+            <label className="field-label">
+              <input name="aiBookingAllowed" type="checkbox" defaultChecked /> 允许 AI 预约
+            </label>
+            <button className="button button-primary" type="submit">
+              添加服务
+            </button>
+          </form>
         </div>
 
         <div className="panel">
@@ -92,13 +203,39 @@ export default async function BusinessProfilePage() {
           <ul className="list">
             {areas.map((area) => (
               <li className="list-item" key={area.id}>
-                <strong>{area.label}</strong>
+                <div style={{ display: "flex", justifyContent: "space-between", gap: 12 }}>
+                  <strong>{area.label}</strong>
+                  <StatusBadge status={area.active ? "qualified" : "closed"} />
+                </div>
                 <p className="muted">
                   {area.ruleType}: {area.ruleValue}
                 </p>
+                <form action={toggleServiceArea}>
+                  <input name="id" type="hidden" value={area.id} />
+                  <button className="button button-muted" type="submit">
+                    {area.active ? "停用" : "启用"}
+                  </button>
+                </form>
               </li>
             ))}
           </ul>
+          <form action={addServiceArea} className="form" style={{ marginTop: 16 }}>
+            <h3 className="panel-title">
+              <Plus aria-hidden size={15} /> 新增区域
+            </h3>
+            <input className="input" name="label" placeholder="区域名称" required />
+            <div className="form-grid">
+              <select className="input" name="ruleType" defaultValue="district">
+                <option value="city">城市</option>
+                <option value="district">区县</option>
+                <option value="postal_code">邮编</option>
+              </select>
+              <input className="input" name="ruleValue" placeholder="匹配值" required />
+            </div>
+            <button className="button button-primary" type="submit">
+              添加区域
+            </button>
+          </form>
         </div>
 
         <div className="panel">
@@ -108,11 +245,30 @@ export default async function BusinessProfilePage() {
           <ul className="list">
             {faqs.map((faq) => (
               <li className="list-item" key={faq.id}>
-                <strong>{faq.question}</strong>
+                <div style={{ display: "flex", justifyContent: "space-between", gap: 12 }}>
+                  <strong>{faq.question}</strong>
+                  <StatusBadge status={faq.active ? "qualified" : "closed"} />
+                </div>
                 <p className="muted">{faq.answer}</p>
+                <form action={toggleFaq}>
+                  <input name="id" type="hidden" value={faq.id} />
+                  <button className="button button-muted" type="submit">
+                    {faq.active ? "停用" : "启用"}
+                  </button>
+                </form>
               </li>
             ))}
           </ul>
+          <form action={addFaq} className="form" style={{ marginTop: 16 }}>
+            <h3 className="panel-title">
+              <Plus aria-hidden size={15} /> 新增 FAQ
+            </h3>
+            <input className="input" name="question" placeholder="问题" required />
+            <textarea className="input textarea" name="answer" placeholder="答案" required />
+            <button className="button button-primary" type="submit">
+              添加 FAQ
+            </button>
+          </form>
         </div>
       </section>
 

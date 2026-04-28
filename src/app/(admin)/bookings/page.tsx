@@ -1,3 +1,4 @@
+import { cancelBooking } from "@/app/(admin)/actions";
 import { StatusBadge } from "@/components/status-badge";
 import { formatDateTime } from "@/lib/format";
 import { prisma } from "@/lib/prisma";
@@ -33,6 +34,7 @@ export default async function BookingsPage() {
               <th>时间</th>
               <th>状态</th>
               <th>日历</th>
+              <th>操作</th>
             </tr>
           </thead>
           <tbody>
@@ -47,6 +49,18 @@ export default async function BookingsPage() {
                   <StatusBadge status={booking.status} />
                 </td>
                 <td className="mono">{booking.calendarEventId ?? "-"}</td>
+                <td>
+                  {booking.status !== "cancelled" ? (
+                    <form action={cancelBooking}>
+                      <input name="id" type="hidden" value={booking.id} />
+                      <button className="button button-danger" type="submit">
+                        取消
+                      </button>
+                    </form>
+                  ) : (
+                    <span className="muted">已取消</span>
+                  )}
+                </td>
               </tr>
             ))}
           </tbody>
