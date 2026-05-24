@@ -4,9 +4,7 @@
 
 客户咨询 -> AI 收集服务信息 -> 判断服务范围 -> 创建预约 -> 后台查看对话/线索/预约/数据 -> 必要时转人工。
 
-![1777355970560](image/README/1777355970560.png)
-
-![1777355893008](image/README/1777355893008.png)
+![AI 接待员 Web Chat 截图](image/README/1777355970560.png)
 
 ## 当前能力
 
@@ -91,6 +89,14 @@ npm run test:e2e
 - Google Calendar OAuth 尚未接入，预约使用本地模拟 `calendarEventId`。
 - 当前环境下 Prisma `migrate` / `db push` 的 schema engine 在 Windows 上报空错误，因此开发库由 `scripts/setup-db.ts` 直接创建，Prisma Client 正常使用。
 - E2E 会重建开发数据库，不要在开发库中保存需要长期保留的数据。
+- 仓库中的商家、联系人、电话、地址和对话均为演示数据，不代表真实个人或机构。
+
+## 合规与版权
+
+- 项目源码以 [MIT License](./LICENSE) 授权。
+- 第三方依赖许可证见 [THIRD_PARTY_LICENSES.md](./THIRD_PARTY_LICENSES.md)。
+- 截图和仓库内图片的来源说明见 [ASSETS.md](./ASSETS.md)。
+- 发布前请确认 `.env`、数据库文件、日志和真实客户数据未被提交；本仓库只保留 `.env.example`。
 
 ## 相关文档
 

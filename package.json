@@ -23,7 +23,7 @@
     "booking",
     "receptionist"
   ],
-  "author": "",
+  "author": "CusOps contributors",
   "license": "MIT",
   "prisma": {
     "seed": "tsx prisma/seed.ts"

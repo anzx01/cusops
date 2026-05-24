@@ -95,7 +95,18 @@
 
 # 三、产品整体结构
 
-<pre class="overflow-visible! px-0!" data-start="805" data-end="1001"><div class="relative w-full mt-4 mb-1"><div class=""><div class="relative"><div class="h-full min-h-0 min-w-0"><div class="h-full min-h-0 min-w-0"><div class="border border-token-border-light border-radius-3xl corner-superellipse/1.1 rounded-3xl"><div class="h-full w-full border-radius-3xl bg-token-bg-elevated-secondary corner-superellipse/1.1 overflow-clip rounded-3xl lxnfua_clipPathFallback"><div class="pointer-events-none absolute end-1.5 top-1 z-2 md:end-2 md:top-1"></div><div class="relative"><div class="pe-11 pt-3"><div class="relative z-0 flex max-w-full"><div id="code-block-viewer" dir="ltr" class="q9tKkq_viewer cm-editor z-10 light:cm-light dark:cm-light flex h-full w-full flex-col items-stretch ͼ5 ͼj"><div class="cm-scroller"><div class="cm-content q9tKkq_readonly"><span>工作台（Dashboard）</span><br/><span>├── AI助手（Agent）</span><br/><span>├── 知识库（Knowledge）</span><br/><span>├── 自动化流程（Workflow）</span><br/><span>├── 渠道接入（Channels）</span><br/><span>├── 预约管理（Booking）</span><br/><span>├── 对话管理（Inbox）</span><br/><span>├── 数据分析（Analytics）</span><br/><span>├── 模板中心（Templates）</span><br/><span>└── 设置（Settings）</span></div></div></div></div></div></div></div></div></div></div><div class=""><div class=""></div></div></div></div></div></pre>
+```text
+工作台（Dashboard）
+├── AI助手（Agent）
+├── 知识库（Knowledge）
+├── 自动化流程（Workflow）
+├── 渠道接入（Channels）
+├── 预约管理（Booking）
+├── 对话管理（Inbox）
+├── 数据分析（Analytics）
+├── 模板中心（Templates）
+└── 设置（Settings）
+```
 
 ---
 
@@ -217,7 +228,14 @@ AI助手执行任务的逻辑路径
 
 ### 示例流程
 
-<pre class="overflow-visible! px-0!" data-start="1750" data-end="1813"><div class="relative w-full mt-4 mb-1"><div class=""><div class="relative"><div class="h-full min-h-0 min-w-0"><div class="h-full min-h-0 min-w-0"><div class="border border-token-border-light border-radius-3xl corner-superellipse/1.1 rounded-3xl"><div class="h-full w-full border-radius-3xl bg-token-bg-elevated-secondary corner-superellipse/1.1 overflow-clip rounded-3xl lxnfua_clipPathFallback"><div class="pointer-events-none absolute end-1.5 top-1 z-2 md:end-2 md:top-1"></div><div class="relative"><div class="pe-11 pt-3"><div class="relative z-0 flex max-w-full"><div id="code-block-viewer" dir="ltr" class="q9tKkq_viewer cm-editor z-10 light:cm-light dark:cm-light flex h-full w-full flex-col items-stretch ͼ5 ͼj"><div class="cm-scroller"><div class="cm-content q9tKkq_readonly"><span>客户咨询</span><br/><span>→ AI回复</span><br/><span>→ 收集信息（姓名/电话）</span><br/><span>→ 判断是否合格</span><br/><span>→ 预约</span><br/><span>→ 发送确认</span></div></div></div></div></div></div></div></div></div></div><div class=""><div class=""></div></div></div></div></div></pre>
+```text
+客户咨询
+→ AI回复
+→ 收集信息（姓名/电话）
+→ 判断是否合格
+→ 预约
+→ 发送确认
+```
 
 ---
 
@@ -370,7 +388,14 @@ AI助手执行任务的逻辑路径
 
 ---
 
-<pre class="overflow-visible! px-0!" data-start="2692" data-end="2754"><div class="relative w-full mt-4 mb-1"><div class=""><div class="relative"><div class="h-full min-h-0 min-w-0"><div class="h-full min-h-0 min-w-0"><div class="border border-token-border-light border-radius-3xl corner-superellipse/1.1 rounded-3xl"><div class="h-full w-full border-radius-3xl bg-token-bg-elevated-secondary corner-superellipse/1.1 overflow-clip rounded-3xl lxnfua_clipPathFallback"><div class="pointer-events-none absolute end-1.5 top-1 z-2 md:end-2 md:top-1"></div><div class="relative"><div class="pe-11 pt-3"><div class="relative z-0 flex max-w-full"><div id="code-block-viewer" dir="ltr" class="q9tKkq_viewer cm-editor z-10 light:cm-light dark:cm-light flex h-full w-full flex-col items-stretch ͼ5 ͼj"><div class="cm-scroller"><div class="cm-content q9tKkq_readonly"><span>选择行业</span><br/><span>→ 填写基础信息</span><br/><span>→ 导入/填写知识库</span><br/><span>→ 连接日历</span><br/><span>→ 启用AI助手</span><br/><span>→ 上线</span></div></div></div></div></div></div></div></div></div></div><div class=""><div class=""></div></div></div></div></div></pre>
+```text
+选择行业
+→ 填写基础信息
+→ 导入/填写知识库
+→ 连接日历
+→ 启用AI助手
+→ 上线
+```
 
 ---
 
