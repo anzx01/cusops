@@ -24,7 +24,7 @@
     "receptionist"
   ],
   "author": "",
-  "license": "UNLICENSED",
+  "license": "MIT",
   "prisma": {
     "seed": "tsx prisma/seed.ts"
   },
